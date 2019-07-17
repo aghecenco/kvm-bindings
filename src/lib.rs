@@ -9,6 +9,11 @@
 mod x86;
 #[cfg(any(target_arch = "x86", target_arch = "x86_64"))]
 pub use self::x86::bindings::*;
+#[cfg(any(target_arch = "x86", target_arch = "x86_64"))]
+extern crate serde;
+#[cfg(any(target_arch = "x86", target_arch = "x86_64"))]
+#[macro_use]
+extern crate serde_derive;
 
 #[cfg(target_arch = "aarch")]
 mod arm;
