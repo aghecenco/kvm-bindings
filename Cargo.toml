@@ -13,3 +13,5 @@ kvm-v4_14_0 = []
 kvm-v4_20_0 = []
 
 [dependencies]
+libc = ">=0.2.39"
+serde = ">=1.0.27"
