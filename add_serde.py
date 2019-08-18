@@ -12,10 +12,11 @@ use std::ptr;
 use libc;
 use serde::de::{Deserialize, Deserializer};
 use serde::{Serialize, Serializer};
+use serde_bytes::ByteBuf;
 
 use super::bindings::*;
 
-fn serialize_ffi<T>(something: &T) -> Vec<u8> {
+fn serialize_ffi<T>(something: &T) -> ByteBuf {
     let mut serialized_self: Vec<u8> = vec![0; mem::size_of::<T>()];
     unsafe {
         libc::memcpy(
@@ -24,11 +25,11 @@ fn serialize_ffi<T>(something: &T) -> Vec<u8> {
             mem::size_of::<T>(),
         );
     }
-    serialized_self
+    ByteBuf::from(serialized_self)
 }
 
-fn deserialize_ffi<T>(serialized: Vec<u8>) -> T {
-    unsafe { ptr::read(serialized.as_ptr() as *const T) }
+fn deserialize_ffi<T>(serialized: ByteBuf) -> T {
+    unsafe { ptr::read(serialized.into_vec().as_ptr() as *const T) }
 }
 
 impl<Storage, Align> Serialize for __BindgenBitfieldUnit<Storage, Align>
@@ -52,7 +53,7 @@ where
     where
         D: Deserializer<'de>,
     {
-        let v: Vec<u8> = Vec::deserialize::<D>(deserializer)?;
+        let v: ByteBuf = ByteBuf::deserialize::<D>(deserializer)?;
         Ok(deserialize_ffi::<__BindgenBitfieldUnit<Storage, Align>>(v))
     }
 }
@@ -74,7 +75,6 @@ impl<'de, T> Deserialize<'de> for __IncompleteArrayField<T> {
         Ok(__IncompleteArrayField::new())
     }
 }
-
 """
 
 SER_DESER_TEMPLATE = """
@@ -93,7 +93,7 @@ impl<'de> Deserialize<'de> for TYPENAME {
         where
             D: Deserializer<'de>,
     {
-        let v: Vec<u8> = Vec::deserialize::<D>(deserializer)?;
+        let v: ByteBuf = ByteBuf::deserialize::<D>(deserializer)?;
         Ok(deserialize_ffi::<TYPENAME>(v))
     }
 }

@@ -7,10 +7,11 @@ use std::ptr;
 use libc;
 use serde::de::{Deserialize, Deserializer};
 use serde::{Serialize, Serializer};
+use serde_bytes::ByteBuf;
 
 use super::bindings::*;
 
-fn serialize_ffi<T>(something: &T) -> Vec<u8> {
+fn serialize_ffi<T>(something: &T) -> ByteBuf {
     let mut serialized_self: Vec<u8> = vec![0; mem::size_of::<T>()];
     unsafe {
         libc::memcpy(
@@ -19,11 +20,11 @@ fn serialize_ffi<T>(something: &T) -> Vec<u8> {
             mem::size_of::<T>(),
         );
     }
-    serialized_self
+    ByteBuf::from(serialized_self)
 }
 
-fn deserialize_ffi<T>(serialized: Vec<u8>) -> T {
-    unsafe { ptr::read(serialized.as_ptr() as *const T) }
+fn deserialize_ffi<T>(serialized: ByteBuf) -> T {
+    unsafe { ptr::read(serialized.into_vec().as_ptr() as *const T) }
 }
 
 impl<Storage, Align> Serialize for __BindgenBitfieldUnit<Storage, Align>
@@ -47,7 +48,7 @@ where
     where
         D: Deserializer<'de>,
     {
-        let v: Vec<u8> = Vec::deserialize::<D>(deserializer)?;
+        let v: ByteBuf = ByteBuf::deserialize::<D>(deserializer)?;
         Ok(deserialize_ffi::<__BindgenBitfieldUnit<Storage, Align>>(v))
     }
 }
@@ -70,7 +71,6 @@ impl<'de, T> Deserialize<'de> for __IncompleteArrayField<T> {
     }
 }
 
-
 impl Serialize for __kernel_fd_set {
     fn serialize<S>(&self, serializer: S) -> std::result::Result<S::Ok, S::Error>
         where
@@ -86,7 +86,7 @@ impl<'de> Deserialize<'de> for __kernel_fd_set {
         where
             D: Deserializer<'de>,
     {
-        let v: Vec<u8> = Vec::deserialize::<D>(deserializer)?;
+        let v: ByteBuf = ByteBuf::deserialize::<D>(deserializer)?;
         Ok(deserialize_ffi::<__kernel_fd_set>(v))
     }
 }
@@ -107,7 +107,7 @@ impl<'de> Deserialize<'de> for __kernel_fsid_t {
         where
             D: Deserializer<'de>,
     {
-        let v: Vec<u8> = Vec::deserialize::<D>(deserializer)?;
+        let v: ByteBuf = ByteBuf::deserialize::<D>(deserializer)?;
         Ok(deserialize_ffi::<__kernel_fsid_t>(v))
     }
 }
@@ -128,7 +128,7 @@ impl<'de> Deserialize<'de> for kvm_memory_alias {
         where
             D: Deserializer<'de>,
     {
-        let v: Vec<u8> = Vec::deserialize::<D>(deserializer)?;
+        let v: ByteBuf = ByteBuf::deserialize::<D>(deserializer)?;
         Ok(deserialize_ffi::<kvm_memory_alias>(v))
     }
 }
@@ -149,7 +149,7 @@ impl<'de> Deserialize<'de> for kvm_pic_state {
         where
             D: Deserializer<'de>,
     {
-        let v: Vec<u8> = Vec::deserialize::<D>(deserializer)?;
+        let v: ByteBuf = ByteBuf::deserialize::<D>(deserializer)?;
         Ok(deserialize_ffi::<kvm_pic_state>(v))
     }
 }
@@ -170,7 +170,7 @@ impl<'de> Deserialize<'de> for kvm_ioapic_state {
         where
             D: Deserializer<'de>,
     {
-        let v: Vec<u8> = Vec::deserialize::<D>(deserializer)?;
+        let v: ByteBuf = ByteBuf::deserialize::<D>(deserializer)?;
         Ok(deserialize_ffi::<kvm_ioapic_state>(v))
     }
 }
@@ -191,7 +191,7 @@ impl<'de> Deserialize<'de> for kvm_ioapic_state__bindgen_ty_1 {
         where
             D: Deserializer<'de>,
     {
-        let v: Vec<u8> = Vec::deserialize::<D>(deserializer)?;
+        let v: ByteBuf = ByteBuf::deserialize::<D>(deserializer)?;
         Ok(deserialize_ffi::<kvm_ioapic_state__bindgen_ty_1>(v))
     }
 }
@@ -212,7 +212,7 @@ impl<'de> Deserialize<'de> for kvm_ioapic_state__bindgen_ty_1__bindgen_ty_1 {
         where
             D: Deserializer<'de>,
     {
-        let v: Vec<u8> = Vec::deserialize::<D>(deserializer)?;
+        let v: ByteBuf = ByteBuf::deserialize::<D>(deserializer)?;
         Ok(deserialize_ffi::<kvm_ioapic_state__bindgen_ty_1__bindgen_ty_1>(v))
     }
 }
@@ -233,7 +233,7 @@ impl<'de> Deserialize<'de> for kvm_regs {
         where
             D: Deserializer<'de>,
     {
-        let v: Vec<u8> = Vec::deserialize::<D>(deserializer)?;
+        let v: ByteBuf = ByteBuf::deserialize::<D>(deserializer)?;
         Ok(deserialize_ffi::<kvm_regs>(v))
     }
 }
@@ -254,7 +254,7 @@ impl<'de> Deserialize<'de> for kvm_lapic_state {
         where
             D: Deserializer<'de>,
     {
-        let v: Vec<u8> = Vec::deserialize::<D>(deserializer)?;
+        let v: ByteBuf = ByteBuf::deserialize::<D>(deserializer)?;
         Ok(deserialize_ffi::<kvm_lapic_state>(v))
     }
 }
@@ -275,7 +275,7 @@ impl<'de> Deserialize<'de> for kvm_segment {
         where
             D: Deserializer<'de>,
     {
-        let v: Vec<u8> = Vec::deserialize::<D>(deserializer)?;
+        let v: ByteBuf = ByteBuf::deserialize::<D>(deserializer)?;
         Ok(deserialize_ffi::<kvm_segment>(v))
     }
 }
@@ -296,7 +296,7 @@ impl<'de> Deserialize<'de> for kvm_dtable {
         where
             D: Deserializer<'de>,
     {
-        let v: Vec<u8> = Vec::deserialize::<D>(deserializer)?;
+        let v: ByteBuf = ByteBuf::deserialize::<D>(deserializer)?;
         Ok(deserialize_ffi::<kvm_dtable>(v))
     }
 }
@@ -317,7 +317,7 @@ impl<'de> Deserialize<'de> for kvm_sregs {
         where
             D: Deserializer<'de>,
     {
-        let v: Vec<u8> = Vec::deserialize::<D>(deserializer)?;
+        let v: ByteBuf = ByteBuf::deserialize::<D>(deserializer)?;
         Ok(deserialize_ffi::<kvm_sregs>(v))
     }
 }
@@ -338,7 +338,7 @@ impl<'de> Deserialize<'de> for kvm_fpu {
         where
             D: Deserializer<'de>,
     {
-        let v: Vec<u8> = Vec::deserialize::<D>(deserializer)?;
+        let v: ByteBuf = ByteBuf::deserialize::<D>(deserializer)?;
         Ok(deserialize_ffi::<kvm_fpu>(v))
     }
 }
@@ -359,7 +359,7 @@ impl<'de> Deserialize<'de> for kvm_msr_entry {
         where
             D: Deserializer<'de>,
     {
-        let v: Vec<u8> = Vec::deserialize::<D>(deserializer)?;
+        let v: ByteBuf = ByteBuf::deserialize::<D>(deserializer)?;
         Ok(deserialize_ffi::<kvm_msr_entry>(v))
     }
 }
@@ -380,7 +380,7 @@ impl<'de> Deserialize<'de> for kvm_msrs {
         where
             D: Deserializer<'de>,
     {
-        let v: Vec<u8> = Vec::deserialize::<D>(deserializer)?;
+        let v: ByteBuf = ByteBuf::deserialize::<D>(deserializer)?;
         Ok(deserialize_ffi::<kvm_msrs>(v))
     }
 }
@@ -401,7 +401,7 @@ impl<'de> Deserialize<'de> for kvm_msr_list {
         where
             D: Deserializer<'de>,
     {
-        let v: Vec<u8> = Vec::deserialize::<D>(deserializer)?;
+        let v: ByteBuf = ByteBuf::deserialize::<D>(deserializer)?;
         Ok(deserialize_ffi::<kvm_msr_list>(v))
     }
 }
@@ -422,7 +422,7 @@ impl<'de> Deserialize<'de> for kvm_cpuid_entry {
         where
             D: Deserializer<'de>,
     {
-        let v: Vec<u8> = Vec::deserialize::<D>(deserializer)?;
+        let v: ByteBuf = ByteBuf::deserialize::<D>(deserializer)?;
         Ok(deserialize_ffi::<kvm_cpuid_entry>(v))
     }
 }
@@ -443,7 +443,7 @@ impl<'de> Deserialize<'de> for kvm_cpuid {
         where
             D: Deserializer<'de>,
     {
-        let v: Vec<u8> = Vec::deserialize::<D>(deserializer)?;
+        let v: ByteBuf = ByteBuf::deserialize::<D>(deserializer)?;
         Ok(deserialize_ffi::<kvm_cpuid>(v))
     }
 }
@@ -464,7 +464,7 @@ impl<'de> Deserialize<'de> for kvm_cpuid_entry2 {
         where
             D: Deserializer<'de>,
     {
-        let v: Vec<u8> = Vec::deserialize::<D>(deserializer)?;
+        let v: ByteBuf = ByteBuf::deserialize::<D>(deserializer)?;
         Ok(deserialize_ffi::<kvm_cpuid_entry2>(v))
     }
 }
@@ -485,7 +485,7 @@ impl<'de> Deserialize<'de> for kvm_cpuid2 {
         where
             D: Deserializer<'de>,
     {
-        let v: Vec<u8> = Vec::deserialize::<D>(deserializer)?;
+        let v: ByteBuf = ByteBuf::deserialize::<D>(deserializer)?;
         Ok(deserialize_ffi::<kvm_cpuid2>(v))
     }
 }
@@ -506,7 +506,7 @@ impl<'de> Deserialize<'de> for kvm_pit_channel_state {
         where
             D: Deserializer<'de>,
     {
-        let v: Vec<u8> = Vec::deserialize::<D>(deserializer)?;
+        let v: ByteBuf = ByteBuf::deserialize::<D>(deserializer)?;
         Ok(deserialize_ffi::<kvm_pit_channel_state>(v))
     }
 }
@@ -527,7 +527,7 @@ impl<'de> Deserialize<'de> for kvm_debug_exit_arch {
         where
             D: Deserializer<'de>,
     {
-        let v: Vec<u8> = Vec::deserialize::<D>(deserializer)?;
+        let v: ByteBuf = ByteBuf::deserialize::<D>(deserializer)?;
         Ok(deserialize_ffi::<kvm_debug_exit_arch>(v))
     }
 }
@@ -548,7 +548,7 @@ impl<'de> Deserialize<'de> for kvm_guest_debug_arch {
         where
             D: Deserializer<'de>,
     {
-        let v: Vec<u8> = Vec::deserialize::<D>(deserializer)?;
+        let v: ByteBuf = ByteBuf::deserialize::<D>(deserializer)?;
         Ok(deserialize_ffi::<kvm_guest_debug_arch>(v))
     }
 }
@@ -569,7 +569,7 @@ impl<'de> Deserialize<'de> for kvm_pit_state {
         where
             D: Deserializer<'de>,
     {
-        let v: Vec<u8> = Vec::deserialize::<D>(deserializer)?;
+        let v: ByteBuf = ByteBuf::deserialize::<D>(deserializer)?;
         Ok(deserialize_ffi::<kvm_pit_state>(v))
     }
 }
@@ -590,7 +590,7 @@ impl<'de> Deserialize<'de> for kvm_pit_state2 {
         where
             D: Deserializer<'de>,
     {
-        let v: Vec<u8> = Vec::deserialize::<D>(deserializer)?;
+        let v: ByteBuf = ByteBuf::deserialize::<D>(deserializer)?;
         Ok(deserialize_ffi::<kvm_pit_state2>(v))
     }
 }
@@ -611,7 +611,7 @@ impl<'de> Deserialize<'de> for kvm_reinject_control {
         where
             D: Deserializer<'de>,
     {
-        let v: Vec<u8> = Vec::deserialize::<D>(deserializer)?;
+        let v: ByteBuf = ByteBuf::deserialize::<D>(deserializer)?;
         Ok(deserialize_ffi::<kvm_reinject_control>(v))
     }
 }
@@ -632,7 +632,7 @@ impl<'de> Deserialize<'de> for kvm_vcpu_events {
         where
             D: Deserializer<'de>,
     {
-        let v: Vec<u8> = Vec::deserialize::<D>(deserializer)?;
+        let v: ByteBuf = ByteBuf::deserialize::<D>(deserializer)?;
         Ok(deserialize_ffi::<kvm_vcpu_events>(v))
     }
 }
@@ -653,7 +653,7 @@ impl<'de> Deserialize<'de> for kvm_vcpu_events__bindgen_ty_1 {
         where
             D: Deserializer<'de>,
     {
-        let v: Vec<u8> = Vec::deserialize::<D>(deserializer)?;
+        let v: ByteBuf = ByteBuf::deserialize::<D>(deserializer)?;
         Ok(deserialize_ffi::<kvm_vcpu_events__bindgen_ty_1>(v))
     }
 }
@@ -674,7 +674,7 @@ impl<'de> Deserialize<'de> for kvm_vcpu_events__bindgen_ty_2 {
         where
             D: Deserializer<'de>,
     {
-        let v: Vec<u8> = Vec::deserialize::<D>(deserializer)?;
+        let v: ByteBuf = ByteBuf::deserialize::<D>(deserializer)?;
         Ok(deserialize_ffi::<kvm_vcpu_events__bindgen_ty_2>(v))
     }
 }
@@ -695,7 +695,7 @@ impl<'de> Deserialize<'de> for kvm_vcpu_events__bindgen_ty_3 {
         where
             D: Deserializer<'de>,
     {
-        let v: Vec<u8> = Vec::deserialize::<D>(deserializer)?;
+        let v: ByteBuf = ByteBuf::deserialize::<D>(deserializer)?;
         Ok(deserialize_ffi::<kvm_vcpu_events__bindgen_ty_3>(v))
     }
 }
@@ -716,7 +716,7 @@ impl<'de> Deserialize<'de> for kvm_vcpu_events__bindgen_ty_4 {
         where
             D: Deserializer<'de>,
     {
-        let v: Vec<u8> = Vec::deserialize::<D>(deserializer)?;
+        let v: ByteBuf = ByteBuf::deserialize::<D>(deserializer)?;
         Ok(deserialize_ffi::<kvm_vcpu_events__bindgen_ty_4>(v))
     }
 }
@@ -737,7 +737,7 @@ impl<'de> Deserialize<'de> for kvm_debugregs {
         where
             D: Deserializer<'de>,
     {
-        let v: Vec<u8> = Vec::deserialize::<D>(deserializer)?;
+        let v: ByteBuf = ByteBuf::deserialize::<D>(deserializer)?;
         Ok(deserialize_ffi::<kvm_debugregs>(v))
     }
 }
@@ -758,7 +758,7 @@ impl<'de> Deserialize<'de> for kvm_xsave {
         where
             D: Deserializer<'de>,
     {
-        let v: Vec<u8> = Vec::deserialize::<D>(deserializer)?;
+        let v: ByteBuf = ByteBuf::deserialize::<D>(deserializer)?;
         Ok(deserialize_ffi::<kvm_xsave>(v))
     }
 }
@@ -779,7 +779,7 @@ impl<'de> Deserialize<'de> for kvm_xcr {
         where
             D: Deserializer<'de>,
     {
-        let v: Vec<u8> = Vec::deserialize::<D>(deserializer)?;
+        let v: ByteBuf = ByteBuf::deserialize::<D>(deserializer)?;
         Ok(deserialize_ffi::<kvm_xcr>(v))
     }
 }
@@ -800,7 +800,7 @@ impl<'de> Deserialize<'de> for kvm_xcrs {
         where
             D: Deserializer<'de>,
     {
-        let v: Vec<u8> = Vec::deserialize::<D>(deserializer)?;
+        let v: ByteBuf = ByteBuf::deserialize::<D>(deserializer)?;
         Ok(deserialize_ffi::<kvm_xcrs>(v))
     }
 }
@@ -821,7 +821,7 @@ impl<'de> Deserialize<'de> for kvm_sync_regs {
         where
             D: Deserializer<'de>,
     {
-        let v: Vec<u8> = Vec::deserialize::<D>(deserializer)?;
+        let v: ByteBuf = ByteBuf::deserialize::<D>(deserializer)?;
         Ok(deserialize_ffi::<kvm_sync_regs>(v))
     }
 }
@@ -842,7 +842,7 @@ impl<'de> Deserialize<'de> for kvm_user_trace_setup {
         where
             D: Deserializer<'de>,
     {
-        let v: Vec<u8> = Vec::deserialize::<D>(deserializer)?;
+        let v: ByteBuf = ByteBuf::deserialize::<D>(deserializer)?;
         Ok(deserialize_ffi::<kvm_user_trace_setup>(v))
     }
 }
@@ -863,7 +863,7 @@ impl<'de> Deserialize<'de> for kvm_breakpoint {
         where
             D: Deserializer<'de>,
     {
-        let v: Vec<u8> = Vec::deserialize::<D>(deserializer)?;
+        let v: ByteBuf = ByteBuf::deserialize::<D>(deserializer)?;
         Ok(deserialize_ffi::<kvm_breakpoint>(v))
     }
 }
@@ -884,7 +884,7 @@ impl<'de> Deserialize<'de> for kvm_debug_guest {
         where
             D: Deserializer<'de>,
     {
-        let v: Vec<u8> = Vec::deserialize::<D>(deserializer)?;
+        let v: ByteBuf = ByteBuf::deserialize::<D>(deserializer)?;
         Ok(deserialize_ffi::<kvm_debug_guest>(v))
     }
 }
@@ -905,7 +905,7 @@ impl<'de> Deserialize<'de> for kvm_memory_region {
         where
             D: Deserializer<'de>,
     {
-        let v: Vec<u8> = Vec::deserialize::<D>(deserializer)?;
+        let v: ByteBuf = ByteBuf::deserialize::<D>(deserializer)?;
         Ok(deserialize_ffi::<kvm_memory_region>(v))
     }
 }
@@ -926,7 +926,7 @@ impl<'de> Deserialize<'de> for kvm_userspace_memory_region {
         where
             D: Deserializer<'de>,
     {
-        let v: Vec<u8> = Vec::deserialize::<D>(deserializer)?;
+        let v: ByteBuf = ByteBuf::deserialize::<D>(deserializer)?;
         Ok(deserialize_ffi::<kvm_userspace_memory_region>(v))
     }
 }
@@ -947,7 +947,7 @@ impl<'de> Deserialize<'de> for kvm_irq_level {
         where
             D: Deserializer<'de>,
     {
-        let v: Vec<u8> = Vec::deserialize::<D>(deserializer)?;
+        let v: ByteBuf = ByteBuf::deserialize::<D>(deserializer)?;
         Ok(deserialize_ffi::<kvm_irq_level>(v))
     }
 }
@@ -968,7 +968,7 @@ impl<'de> Deserialize<'de> for kvm_irq_level__bindgen_ty_1 {
         where
             D: Deserializer<'de>,
     {
-        let v: Vec<u8> = Vec::deserialize::<D>(deserializer)?;
+        let v: ByteBuf = ByteBuf::deserialize::<D>(deserializer)?;
         Ok(deserialize_ffi::<kvm_irq_level__bindgen_ty_1>(v))
     }
 }
@@ -989,7 +989,7 @@ impl<'de> Deserialize<'de> for kvm_irqchip {
         where
             D: Deserializer<'de>,
     {
-        let v: Vec<u8> = Vec::deserialize::<D>(deserializer)?;
+        let v: ByteBuf = ByteBuf::deserialize::<D>(deserializer)?;
         Ok(deserialize_ffi::<kvm_irqchip>(v))
     }
 }
@@ -1010,7 +1010,7 @@ impl<'de> Deserialize<'de> for kvm_irqchip__bindgen_ty_1 {
         where
             D: Deserializer<'de>,
     {
-        let v: Vec<u8> = Vec::deserialize::<D>(deserializer)?;
+        let v: ByteBuf = ByteBuf::deserialize::<D>(deserializer)?;
         Ok(deserialize_ffi::<kvm_irqchip__bindgen_ty_1>(v))
     }
 }
@@ -1031,7 +1031,7 @@ impl<'de> Deserialize<'de> for kvm_pit_config {
         where
             D: Deserializer<'de>,
     {
-        let v: Vec<u8> = Vec::deserialize::<D>(deserializer)?;
+        let v: ByteBuf = ByteBuf::deserialize::<D>(deserializer)?;
         Ok(deserialize_ffi::<kvm_pit_config>(v))
     }
 }
@@ -1052,7 +1052,7 @@ impl<'de> Deserialize<'de> for kvm_s390_skeys {
         where
             D: Deserializer<'de>,
     {
-        let v: Vec<u8> = Vec::deserialize::<D>(deserializer)?;
+        let v: ByteBuf = ByteBuf::deserialize::<D>(deserializer)?;
         Ok(deserialize_ffi::<kvm_s390_skeys>(v))
     }
 }
@@ -1073,7 +1073,7 @@ impl<'de> Deserialize<'de> for kvm_s390_cmma_log {
         where
             D: Deserializer<'de>,
     {
-        let v: Vec<u8> = Vec::deserialize::<D>(deserializer)?;
+        let v: ByteBuf = ByteBuf::deserialize::<D>(deserializer)?;
         Ok(deserialize_ffi::<kvm_s390_cmma_log>(v))
     }
 }
@@ -1094,7 +1094,7 @@ impl<'de> Deserialize<'de> for kvm_s390_cmma_log__bindgen_ty_1 {
         where
             D: Deserializer<'de>,
     {
-        let v: Vec<u8> = Vec::deserialize::<D>(deserializer)?;
+        let v: ByteBuf = ByteBuf::deserialize::<D>(deserializer)?;
         Ok(deserialize_ffi::<kvm_s390_cmma_log__bindgen_ty_1>(v))
     }
 }
@@ -1115,7 +1115,7 @@ impl<'de> Deserialize<'de> for kvm_hyperv_exit {
         where
             D: Deserializer<'de>,
     {
-        let v: Vec<u8> = Vec::deserialize::<D>(deserializer)?;
+        let v: ByteBuf = ByteBuf::deserialize::<D>(deserializer)?;
         Ok(deserialize_ffi::<kvm_hyperv_exit>(v))
     }
 }
@@ -1136,7 +1136,7 @@ impl<'de> Deserialize<'de> for kvm_hyperv_exit__bindgen_ty_1 {
         where
             D: Deserializer<'de>,
     {
-        let v: Vec<u8> = Vec::deserialize::<D>(deserializer)?;
+        let v: ByteBuf = ByteBuf::deserialize::<D>(deserializer)?;
         Ok(deserialize_ffi::<kvm_hyperv_exit__bindgen_ty_1>(v))
     }
 }
@@ -1157,7 +1157,7 @@ impl<'de> Deserialize<'de> for kvm_hyperv_exit__bindgen_ty_1__bindgen_ty_1 {
         where
             D: Deserializer<'de>,
     {
-        let v: Vec<u8> = Vec::deserialize::<D>(deserializer)?;
+        let v: ByteBuf = ByteBuf::deserialize::<D>(deserializer)?;
         Ok(deserialize_ffi::<kvm_hyperv_exit__bindgen_ty_1__bindgen_ty_1>(v))
     }
 }
@@ -1178,7 +1178,7 @@ impl<'de> Deserialize<'de> for kvm_hyperv_exit__bindgen_ty_1__bindgen_ty_2 {
         where
             D: Deserializer<'de>,
     {
-        let v: Vec<u8> = Vec::deserialize::<D>(deserializer)?;
+        let v: ByteBuf = ByteBuf::deserialize::<D>(deserializer)?;
         Ok(deserialize_ffi::<kvm_hyperv_exit__bindgen_ty_1__bindgen_ty_2>(v))
     }
 }
@@ -1199,7 +1199,7 @@ impl<'de> Deserialize<'de> for kvm_run {
         where
             D: Deserializer<'de>,
     {
-        let v: Vec<u8> = Vec::deserialize::<D>(deserializer)?;
+        let v: ByteBuf = ByteBuf::deserialize::<D>(deserializer)?;
         Ok(deserialize_ffi::<kvm_run>(v))
     }
 }
@@ -1220,7 +1220,7 @@ impl<'de> Deserialize<'de> for kvm_run__bindgen_ty_1 {
         where
             D: Deserializer<'de>,
     {
-        let v: Vec<u8> = Vec::deserialize::<D>(deserializer)?;
+        let v: ByteBuf = ByteBuf::deserialize::<D>(deserializer)?;
         Ok(deserialize_ffi::<kvm_run__bindgen_ty_1>(v))
     }
 }
@@ -1241,7 +1241,7 @@ impl<'de> Deserialize<'de> for kvm_run__bindgen_ty_1__bindgen_ty_1 {
         where
             D: Deserializer<'de>,
     {
-        let v: Vec<u8> = Vec::deserialize::<D>(deserializer)?;
+        let v: ByteBuf = ByteBuf::deserialize::<D>(deserializer)?;
         Ok(deserialize_ffi::<kvm_run__bindgen_ty_1__bindgen_ty_1>(v))
     }
 }
@@ -1262,7 +1262,7 @@ impl<'de> Deserialize<'de> for kvm_run__bindgen_ty_1__bindgen_ty_2 {
         where
             D: Deserializer<'de>,
     {
-        let v: Vec<u8> = Vec::deserialize::<D>(deserializer)?;
+        let v: ByteBuf = ByteBuf::deserialize::<D>(deserializer)?;
         Ok(deserialize_ffi::<kvm_run__bindgen_ty_1__bindgen_ty_2>(v))
     }
 }
@@ -1283,7 +1283,7 @@ impl<'de> Deserialize<'de> for kvm_run__bindgen_ty_1__bindgen_ty_3 {
         where
             D: Deserializer<'de>,
     {
-        let v: Vec<u8> = Vec::deserialize::<D>(deserializer)?;
+        let v: ByteBuf = ByteBuf::deserialize::<D>(deserializer)?;
         Ok(deserialize_ffi::<kvm_run__bindgen_ty_1__bindgen_ty_3>(v))
     }
 }
@@ -1304,7 +1304,7 @@ impl<'de> Deserialize<'de> for kvm_run__bindgen_ty_1__bindgen_ty_4 {
         where
             D: Deserializer<'de>,
     {
-        let v: Vec<u8> = Vec::deserialize::<D>(deserializer)?;
+        let v: ByteBuf = ByteBuf::deserialize::<D>(deserializer)?;
         Ok(deserialize_ffi::<kvm_run__bindgen_ty_1__bindgen_ty_4>(v))
     }
 }
@@ -1325,7 +1325,7 @@ impl<'de> Deserialize<'de> for kvm_run__bindgen_ty_1__bindgen_ty_5 {
         where
             D: Deserializer<'de>,
     {
-        let v: Vec<u8> = Vec::deserialize::<D>(deserializer)?;
+        let v: ByteBuf = ByteBuf::deserialize::<D>(deserializer)?;
         Ok(deserialize_ffi::<kvm_run__bindgen_ty_1__bindgen_ty_5>(v))
     }
 }
@@ -1346,7 +1346,7 @@ impl<'de> Deserialize<'de> for kvm_run__bindgen_ty_1__bindgen_ty_6 {
         where
             D: Deserializer<'de>,
     {
-        let v: Vec<u8> = Vec::deserialize::<D>(deserializer)?;
+        let v: ByteBuf = ByteBuf::deserialize::<D>(deserializer)?;
         Ok(deserialize_ffi::<kvm_run__bindgen_ty_1__bindgen_ty_6>(v))
     }
 }
@@ -1367,7 +1367,7 @@ impl<'de> Deserialize<'de> for kvm_run__bindgen_ty_1__bindgen_ty_7 {
         where
             D: Deserializer<'de>,
     {
-        let v: Vec<u8> = Vec::deserialize::<D>(deserializer)?;
+        let v: ByteBuf = ByteBuf::deserialize::<D>(deserializer)?;
         Ok(deserialize_ffi::<kvm_run__bindgen_ty_1__bindgen_ty_7>(v))
     }
 }
@@ -1388,7 +1388,7 @@ impl<'de> Deserialize<'de> for kvm_run__bindgen_ty_1__bindgen_ty_8 {
         where
             D: Deserializer<'de>,
     {
-        let v: Vec<u8> = Vec::deserialize::<D>(deserializer)?;
+        let v: ByteBuf = ByteBuf::deserialize::<D>(deserializer)?;
         Ok(deserialize_ffi::<kvm_run__bindgen_ty_1__bindgen_ty_8>(v))
     }
 }
@@ -1409,7 +1409,7 @@ impl<'de> Deserialize<'de> for kvm_run__bindgen_ty_1__bindgen_ty_9 {
         where
             D: Deserializer<'de>,
     {
-        let v: Vec<u8> = Vec::deserialize::<D>(deserializer)?;
+        let v: ByteBuf = ByteBuf::deserialize::<D>(deserializer)?;
         Ok(deserialize_ffi::<kvm_run__bindgen_ty_1__bindgen_ty_9>(v))
     }
 }
@@ -1430,7 +1430,7 @@ impl<'de> Deserialize<'de> for kvm_run__bindgen_ty_1__bindgen_ty_10 {
         where
             D: Deserializer<'de>,
     {
-        let v: Vec<u8> = Vec::deserialize::<D>(deserializer)?;
+        let v: ByteBuf = ByteBuf::deserialize::<D>(deserializer)?;
         Ok(deserialize_ffi::<kvm_run__bindgen_ty_1__bindgen_ty_10>(v))
     }
 }
@@ -1451,7 +1451,7 @@ impl<'de> Deserialize<'de> for kvm_run__bindgen_ty_1__bindgen_ty_11 {
         where
             D: Deserializer<'de>,
     {
-        let v: Vec<u8> = Vec::deserialize::<D>(deserializer)?;
+        let v: ByteBuf = ByteBuf::deserialize::<D>(deserializer)?;
         Ok(deserialize_ffi::<kvm_run__bindgen_ty_1__bindgen_ty_11>(v))
     }
 }
@@ -1472,7 +1472,7 @@ impl<'de> Deserialize<'de> for kvm_run__bindgen_ty_1__bindgen_ty_12 {
         where
             D: Deserializer<'de>,
     {
-        let v: Vec<u8> = Vec::deserialize::<D>(deserializer)?;
+        let v: ByteBuf = ByteBuf::deserialize::<D>(deserializer)?;
         Ok(deserialize_ffi::<kvm_run__bindgen_ty_1__bindgen_ty_12>(v))
     }
 }
@@ -1493,7 +1493,7 @@ impl<'de> Deserialize<'de> for kvm_run__bindgen_ty_1__bindgen_ty_13 {
         where
             D: Deserializer<'de>,
     {
-        let v: Vec<u8> = Vec::deserialize::<D>(deserializer)?;
+        let v: ByteBuf = ByteBuf::deserialize::<D>(deserializer)?;
         Ok(deserialize_ffi::<kvm_run__bindgen_ty_1__bindgen_ty_13>(v))
     }
 }
@@ -1514,7 +1514,7 @@ impl<'de> Deserialize<'de> for kvm_run__bindgen_ty_1__bindgen_ty_14 {
         where
             D: Deserializer<'de>,
     {
-        let v: Vec<u8> = Vec::deserialize::<D>(deserializer)?;
+        let v: ByteBuf = ByteBuf::deserialize::<D>(deserializer)?;
         Ok(deserialize_ffi::<kvm_run__bindgen_ty_1__bindgen_ty_14>(v))
     }
 }
@@ -1535,7 +1535,7 @@ impl<'de> Deserialize<'de> for kvm_run__bindgen_ty_1__bindgen_ty_15 {
         where
             D: Deserializer<'de>,
     {
-        let v: Vec<u8> = Vec::deserialize::<D>(deserializer)?;
+        let v: ByteBuf = ByteBuf::deserialize::<D>(deserializer)?;
         Ok(deserialize_ffi::<kvm_run__bindgen_ty_1__bindgen_ty_15>(v))
     }
 }
@@ -1556,7 +1556,7 @@ impl<'de> Deserialize<'de> for kvm_run__bindgen_ty_1__bindgen_ty_16 {
         where
             D: Deserializer<'de>,
     {
-        let v: Vec<u8> = Vec::deserialize::<D>(deserializer)?;
+        let v: ByteBuf = ByteBuf::deserialize::<D>(deserializer)?;
         Ok(deserialize_ffi::<kvm_run__bindgen_ty_1__bindgen_ty_16>(v))
     }
 }
@@ -1577,7 +1577,7 @@ impl<'de> Deserialize<'de> for kvm_run__bindgen_ty_1__bindgen_ty_17 {
         where
             D: Deserializer<'de>,
     {
-        let v: Vec<u8> = Vec::deserialize::<D>(deserializer)?;
+        let v: ByteBuf = ByteBuf::deserialize::<D>(deserializer)?;
         Ok(deserialize_ffi::<kvm_run__bindgen_ty_1__bindgen_ty_17>(v))
     }
 }
@@ -1598,7 +1598,7 @@ impl<'de> Deserialize<'de> for kvm_run__bindgen_ty_1__bindgen_ty_18 {
         where
             D: Deserializer<'de>,
     {
-        let v: Vec<u8> = Vec::deserialize::<D>(deserializer)?;
+        let v: ByteBuf = ByteBuf::deserialize::<D>(deserializer)?;
         Ok(deserialize_ffi::<kvm_run__bindgen_ty_1__bindgen_ty_18>(v))
     }
 }
@@ -1619,7 +1619,7 @@ impl<'de> Deserialize<'de> for kvm_run__bindgen_ty_1__bindgen_ty_19 {
         where
             D: Deserializer<'de>,
     {
-        let v: Vec<u8> = Vec::deserialize::<D>(deserializer)?;
+        let v: ByteBuf = ByteBuf::deserialize::<D>(deserializer)?;
         Ok(deserialize_ffi::<kvm_run__bindgen_ty_1__bindgen_ty_19>(v))
     }
 }
@@ -1640,7 +1640,7 @@ impl<'de> Deserialize<'de> for kvm_run__bindgen_ty_2 {
         where
             D: Deserializer<'de>,
     {
-        let v: Vec<u8> = Vec::deserialize::<D>(deserializer)?;
+        let v: ByteBuf = ByteBuf::deserialize::<D>(deserializer)?;
         Ok(deserialize_ffi::<kvm_run__bindgen_ty_2>(v))
     }
 }
@@ -1661,7 +1661,7 @@ impl<'de> Deserialize<'de> for kvm_coalesced_mmio_zone {
         where
             D: Deserializer<'de>,
     {
-        let v: Vec<u8> = Vec::deserialize::<D>(deserializer)?;
+        let v: ByteBuf = ByteBuf::deserialize::<D>(deserializer)?;
         Ok(deserialize_ffi::<kvm_coalesced_mmio_zone>(v))
     }
 }
@@ -1682,7 +1682,7 @@ impl<'de> Deserialize<'de> for kvm_coalesced_mmio {
         where
             D: Deserializer<'de>,
     {
-        let v: Vec<u8> = Vec::deserialize::<D>(deserializer)?;
+        let v: ByteBuf = ByteBuf::deserialize::<D>(deserializer)?;
         Ok(deserialize_ffi::<kvm_coalesced_mmio>(v))
     }
 }
@@ -1703,7 +1703,7 @@ impl<'de> Deserialize<'de> for kvm_coalesced_mmio_ring {
         where
             D: Deserializer<'de>,
     {
-        let v: Vec<u8> = Vec::deserialize::<D>(deserializer)?;
+        let v: ByteBuf = ByteBuf::deserialize::<D>(deserializer)?;
         Ok(deserialize_ffi::<kvm_coalesced_mmio_ring>(v))
     }
 }
@@ -1724,7 +1724,7 @@ impl<'de> Deserialize<'de> for kvm_translation {
         where
             D: Deserializer<'de>,
     {
-        let v: Vec<u8> = Vec::deserialize::<D>(deserializer)?;
+        let v: ByteBuf = ByteBuf::deserialize::<D>(deserializer)?;
         Ok(deserialize_ffi::<kvm_translation>(v))
     }
 }
@@ -1745,7 +1745,7 @@ impl<'de> Deserialize<'de> for kvm_s390_mem_op {
         where
             D: Deserializer<'de>,
     {
-        let v: Vec<u8> = Vec::deserialize::<D>(deserializer)?;
+        let v: ByteBuf = ByteBuf::deserialize::<D>(deserializer)?;
         Ok(deserialize_ffi::<kvm_s390_mem_op>(v))
     }
 }
@@ -1766,7 +1766,7 @@ impl<'de> Deserialize<'de> for kvm_interrupt {
         where
             D: Deserializer<'de>,
     {
-        let v: Vec<u8> = Vec::deserialize::<D>(deserializer)?;
+        let v: ByteBuf = ByteBuf::deserialize::<D>(deserializer)?;
         Ok(deserialize_ffi::<kvm_interrupt>(v))
     }
 }
@@ -1787,7 +1787,7 @@ impl<'de> Deserialize<'de> for kvm_dirty_log {
         where
             D: Deserializer<'de>,
     {
-        let v: Vec<u8> = Vec::deserialize::<D>(deserializer)?;
+        let v: ByteBuf = ByteBuf::deserialize::<D>(deserializer)?;
         Ok(deserialize_ffi::<kvm_dirty_log>(v))
     }
 }
@@ -1808,7 +1808,7 @@ impl<'de> Deserialize<'de> for kvm_dirty_log__bindgen_ty_1 {
         where
             D: Deserializer<'de>,
     {
-        let v: Vec<u8> = Vec::deserialize::<D>(deserializer)?;
+        let v: ByteBuf = ByteBuf::deserialize::<D>(deserializer)?;
         Ok(deserialize_ffi::<kvm_dirty_log__bindgen_ty_1>(v))
     }
 }
@@ -1829,7 +1829,7 @@ impl<'de> Deserialize<'de> for kvm_signal_mask {
         where
             D: Deserializer<'de>,
     {
-        let v: Vec<u8> = Vec::deserialize::<D>(deserializer)?;
+        let v: ByteBuf = ByteBuf::deserialize::<D>(deserializer)?;
         Ok(deserialize_ffi::<kvm_signal_mask>(v))
     }
 }
@@ -1850,7 +1850,7 @@ impl<'de> Deserialize<'de> for kvm_tpr_access_ctl {
         where
             D: Deserializer<'de>,
     {
-        let v: Vec<u8> = Vec::deserialize::<D>(deserializer)?;
+        let v: ByteBuf = ByteBuf::deserialize::<D>(deserializer)?;
         Ok(deserialize_ffi::<kvm_tpr_access_ctl>(v))
     }
 }
@@ -1871,7 +1871,7 @@ impl<'de> Deserialize<'de> for kvm_vapic_addr {
         where
             D: Deserializer<'de>,
     {
-        let v: Vec<u8> = Vec::deserialize::<D>(deserializer)?;
+        let v: ByteBuf = ByteBuf::deserialize::<D>(deserializer)?;
         Ok(deserialize_ffi::<kvm_vapic_addr>(v))
     }
 }
@@ -1892,7 +1892,7 @@ impl<'de> Deserialize<'de> for kvm_mp_state {
         where
             D: Deserializer<'de>,
     {
-        let v: Vec<u8> = Vec::deserialize::<D>(deserializer)?;
+        let v: ByteBuf = ByteBuf::deserialize::<D>(deserializer)?;
         Ok(deserialize_ffi::<kvm_mp_state>(v))
     }
 }
@@ -1913,7 +1913,7 @@ impl<'de> Deserialize<'de> for kvm_s390_psw {
         where
             D: Deserializer<'de>,
     {
-        let v: Vec<u8> = Vec::deserialize::<D>(deserializer)?;
+        let v: ByteBuf = ByteBuf::deserialize::<D>(deserializer)?;
         Ok(deserialize_ffi::<kvm_s390_psw>(v))
     }
 }
@@ -1934,7 +1934,7 @@ impl<'de> Deserialize<'de> for kvm_s390_interrupt {
         where
             D: Deserializer<'de>,
     {
-        let v: Vec<u8> = Vec::deserialize::<D>(deserializer)?;
+        let v: ByteBuf = ByteBuf::deserialize::<D>(deserializer)?;
         Ok(deserialize_ffi::<kvm_s390_interrupt>(v))
     }
 }
@@ -1955,7 +1955,7 @@ impl<'de> Deserialize<'de> for kvm_s390_io_info {
         where
             D: Deserializer<'de>,
     {
-        let v: Vec<u8> = Vec::deserialize::<D>(deserializer)?;
+        let v: ByteBuf = ByteBuf::deserialize::<D>(deserializer)?;
         Ok(deserialize_ffi::<kvm_s390_io_info>(v))
     }
 }
@@ -1976,7 +1976,7 @@ impl<'de> Deserialize<'de> for kvm_s390_ext_info {
         where
             D: Deserializer<'de>,
     {
-        let v: Vec<u8> = Vec::deserialize::<D>(deserializer)?;
+        let v: ByteBuf = ByteBuf::deserialize::<D>(deserializer)?;
         Ok(deserialize_ffi::<kvm_s390_ext_info>(v))
     }
 }
@@ -1997,7 +1997,7 @@ impl<'de> Deserialize<'de> for kvm_s390_pgm_info {
         where
             D: Deserializer<'de>,
     {
-        let v: Vec<u8> = Vec::deserialize::<D>(deserializer)?;
+        let v: ByteBuf = ByteBuf::deserialize::<D>(deserializer)?;
         Ok(deserialize_ffi::<kvm_s390_pgm_info>(v))
     }
 }
@@ -2018,7 +2018,7 @@ impl<'de> Deserialize<'de> for kvm_s390_prefix_info {
         where
             D: Deserializer<'de>,
     {
-        let v: Vec<u8> = Vec::deserialize::<D>(deserializer)?;
+        let v: ByteBuf = ByteBuf::deserialize::<D>(deserializer)?;
         Ok(deserialize_ffi::<kvm_s390_prefix_info>(v))
     }
 }
@@ -2039,7 +2039,7 @@ impl<'de> Deserialize<'de> for kvm_s390_extcall_info {
         where
             D: Deserializer<'de>,
     {
-        let v: Vec<u8> = Vec::deserialize::<D>(deserializer)?;
+        let v: ByteBuf = ByteBuf::deserialize::<D>(deserializer)?;
         Ok(deserialize_ffi::<kvm_s390_extcall_info>(v))
     }
 }
@@ -2060,7 +2060,7 @@ impl<'de> Deserialize<'de> for kvm_s390_emerg_info {
         where
             D: Deserializer<'de>,
     {
-        let v: Vec<u8> = Vec::deserialize::<D>(deserializer)?;
+        let v: ByteBuf = ByteBuf::deserialize::<D>(deserializer)?;
         Ok(deserialize_ffi::<kvm_s390_emerg_info>(v))
     }
 }
@@ -2081,7 +2081,7 @@ impl<'de> Deserialize<'de> for kvm_s390_stop_info {
         where
             D: Deserializer<'de>,
     {
-        let v: Vec<u8> = Vec::deserialize::<D>(deserializer)?;
+        let v: ByteBuf = ByteBuf::deserialize::<D>(deserializer)?;
         Ok(deserialize_ffi::<kvm_s390_stop_info>(v))
     }
 }
@@ -2102,7 +2102,7 @@ impl<'de> Deserialize<'de> for kvm_s390_mchk_info {
         where
             D: Deserializer<'de>,
     {
-        let v: Vec<u8> = Vec::deserialize::<D>(deserializer)?;
+        let v: ByteBuf = ByteBuf::deserialize::<D>(deserializer)?;
         Ok(deserialize_ffi::<kvm_s390_mchk_info>(v))
     }
 }
@@ -2123,7 +2123,7 @@ impl<'de> Deserialize<'de> for kvm_s390_irq {
         where
             D: Deserializer<'de>,
     {
-        let v: Vec<u8> = Vec::deserialize::<D>(deserializer)?;
+        let v: ByteBuf = ByteBuf::deserialize::<D>(deserializer)?;
         Ok(deserialize_ffi::<kvm_s390_irq>(v))
     }
 }
@@ -2144,7 +2144,7 @@ impl<'de> Deserialize<'de> for kvm_s390_irq__bindgen_ty_1 {
         where
             D: Deserializer<'de>,
     {
-        let v: Vec<u8> = Vec::deserialize::<D>(deserializer)?;
+        let v: ByteBuf = ByteBuf::deserialize::<D>(deserializer)?;
         Ok(deserialize_ffi::<kvm_s390_irq__bindgen_ty_1>(v))
     }
 }
@@ -2165,7 +2165,7 @@ impl<'de> Deserialize<'de> for kvm_s390_irq_state {
         where
             D: Deserializer<'de>,
     {
-        let v: Vec<u8> = Vec::deserialize::<D>(deserializer)?;
+        let v: ByteBuf = ByteBuf::deserialize::<D>(deserializer)?;
         Ok(deserialize_ffi::<kvm_s390_irq_state>(v))
     }
 }
@@ -2186,7 +2186,7 @@ impl<'de> Deserialize<'de> for kvm_guest_debug {
         where
             D: Deserializer<'de>,
     {
-        let v: Vec<u8> = Vec::deserialize::<D>(deserializer)?;
+        let v: ByteBuf = ByteBuf::deserialize::<D>(deserializer)?;
         Ok(deserialize_ffi::<kvm_guest_debug>(v))
     }
 }
@@ -2207,7 +2207,7 @@ impl<'de> Deserialize<'de> for kvm_ioeventfd {
         where
             D: Deserializer<'de>,
     {
-        let v: Vec<u8> = Vec::deserialize::<D>(deserializer)?;
+        let v: ByteBuf = ByteBuf::deserialize::<D>(deserializer)?;
         Ok(deserialize_ffi::<kvm_ioeventfd>(v))
     }
 }
@@ -2228,7 +2228,7 @@ impl<'de> Deserialize<'de> for kvm_enable_cap {
         where
             D: Deserializer<'de>,
     {
-        let v: Vec<u8> = Vec::deserialize::<D>(deserializer)?;
+        let v: ByteBuf = ByteBuf::deserialize::<D>(deserializer)?;
         Ok(deserialize_ffi::<kvm_enable_cap>(v))
     }
 }
@@ -2249,7 +2249,7 @@ impl<'de> Deserialize<'de> for kvm_ppc_pvinfo {
         where
             D: Deserializer<'de>,
     {
-        let v: Vec<u8> = Vec::deserialize::<D>(deserializer)?;
+        let v: ByteBuf = ByteBuf::deserialize::<D>(deserializer)?;
         Ok(deserialize_ffi::<kvm_ppc_pvinfo>(v))
     }
 }
@@ -2270,7 +2270,7 @@ impl<'de> Deserialize<'de> for kvm_ppc_one_page_size {
         where
             D: Deserializer<'de>,
     {
-        let v: Vec<u8> = Vec::deserialize::<D>(deserializer)?;
+        let v: ByteBuf = ByteBuf::deserialize::<D>(deserializer)?;
         Ok(deserialize_ffi::<kvm_ppc_one_page_size>(v))
     }
 }
@@ -2291,7 +2291,7 @@ impl<'de> Deserialize<'de> for kvm_ppc_one_seg_page_size {
         where
             D: Deserializer<'de>,
     {
-        let v: Vec<u8> = Vec::deserialize::<D>(deserializer)?;
+        let v: ByteBuf = ByteBuf::deserialize::<D>(deserializer)?;
         Ok(deserialize_ffi::<kvm_ppc_one_seg_page_size>(v))
     }
 }
@@ -2312,7 +2312,7 @@ impl<'de> Deserialize<'de> for kvm_ppc_smmu_info {
         where
             D: Deserializer<'de>,
     {
-        let v: Vec<u8> = Vec::deserialize::<D>(deserializer)?;
+        let v: ByteBuf = ByteBuf::deserialize::<D>(deserializer)?;
         Ok(deserialize_ffi::<kvm_ppc_smmu_info>(v))
     }
 }
@@ -2333,7 +2333,7 @@ impl<'de> Deserialize<'de> for kvm_ppc_resize_hpt {
         where
             D: Deserializer<'de>,
     {
-        let v: Vec<u8> = Vec::deserialize::<D>(deserializer)?;
+        let v: ByteBuf = ByteBuf::deserialize::<D>(deserializer)?;
         Ok(deserialize_ffi::<kvm_ppc_resize_hpt>(v))
     }
 }
@@ -2354,7 +2354,7 @@ impl<'de> Deserialize<'de> for kvm_irq_routing_irqchip {
         where
             D: Deserializer<'de>,
     {
-        let v: Vec<u8> = Vec::deserialize::<D>(deserializer)?;
+        let v: ByteBuf = ByteBuf::deserialize::<D>(deserializer)?;
         Ok(deserialize_ffi::<kvm_irq_routing_irqchip>(v))
     }
 }
@@ -2375,7 +2375,7 @@ impl<'de> Deserialize<'de> for kvm_irq_routing_msi {
         where
             D: Deserializer<'de>,
     {
-        let v: Vec<u8> = Vec::deserialize::<D>(deserializer)?;
+        let v: ByteBuf = ByteBuf::deserialize::<D>(deserializer)?;
         Ok(deserialize_ffi::<kvm_irq_routing_msi>(v))
     }
 }
@@ -2396,7 +2396,7 @@ impl<'de> Deserialize<'de> for kvm_irq_routing_msi__bindgen_ty_1 {
         where
             D: Deserializer<'de>,
     {
-        let v: Vec<u8> = Vec::deserialize::<D>(deserializer)?;
+        let v: ByteBuf = ByteBuf::deserialize::<D>(deserializer)?;
         Ok(deserialize_ffi::<kvm_irq_routing_msi__bindgen_ty_1>(v))
     }
 }
@@ -2417,7 +2417,7 @@ impl<'de> Deserialize<'de> for kvm_irq_routing_s390_adapter {
         where
             D: Deserializer<'de>,
     {
-        let v: Vec<u8> = Vec::deserialize::<D>(deserializer)?;
+        let v: ByteBuf = ByteBuf::deserialize::<D>(deserializer)?;
         Ok(deserialize_ffi::<kvm_irq_routing_s390_adapter>(v))
     }
 }
@@ -2438,7 +2438,7 @@ impl<'de> Deserialize<'de> for kvm_irq_routing_hv_sint {
         where
             D: Deserializer<'de>,
     {
-        let v: Vec<u8> = Vec::deserialize::<D>(deserializer)?;
+        let v: ByteBuf = ByteBuf::deserialize::<D>(deserializer)?;
         Ok(deserialize_ffi::<kvm_irq_routing_hv_sint>(v))
     }
 }
@@ -2459,7 +2459,7 @@ impl<'de> Deserialize<'de> for kvm_irq_routing_entry {
         where
             D: Deserializer<'de>,
     {
-        let v: Vec<u8> = Vec::deserialize::<D>(deserializer)?;
+        let v: ByteBuf = ByteBuf::deserialize::<D>(deserializer)?;
         Ok(deserialize_ffi::<kvm_irq_routing_entry>(v))
     }
 }
@@ -2480,7 +2480,7 @@ impl<'de> Deserialize<'de> for kvm_irq_routing_entry__bindgen_ty_1 {
         where
             D: Deserializer<'de>,
     {
-        let v: Vec<u8> = Vec::deserialize::<D>(deserializer)?;
+        let v: ByteBuf = ByteBuf::deserialize::<D>(deserializer)?;
         Ok(deserialize_ffi::<kvm_irq_routing_entry__bindgen_ty_1>(v))
     }
 }
@@ -2501,7 +2501,7 @@ impl<'de> Deserialize<'de> for kvm_irq_routing {
         where
             D: Deserializer<'de>,
     {
-        let v: Vec<u8> = Vec::deserialize::<D>(deserializer)?;
+        let v: ByteBuf = ByteBuf::deserialize::<D>(deserializer)?;
         Ok(deserialize_ffi::<kvm_irq_routing>(v))
     }
 }
@@ -2522,7 +2522,7 @@ impl<'de> Deserialize<'de> for kvm_x86_mce {
         where
             D: Deserializer<'de>,
     {
-        let v: Vec<u8> = Vec::deserialize::<D>(deserializer)?;
+        let v: ByteBuf = ByteBuf::deserialize::<D>(deserializer)?;
         Ok(deserialize_ffi::<kvm_x86_mce>(v))
     }
 }
@@ -2543,7 +2543,7 @@ impl<'de> Deserialize<'de> for kvm_xen_hvm_config {
         where
             D: Deserializer<'de>,
     {
-        let v: Vec<u8> = Vec::deserialize::<D>(deserializer)?;
+        let v: ByteBuf = ByteBuf::deserialize::<D>(deserializer)?;
         Ok(deserialize_ffi::<kvm_xen_hvm_config>(v))
     }
 }
@@ -2564,7 +2564,7 @@ impl<'de> Deserialize<'de> for kvm_irqfd {
         where
             D: Deserializer<'de>,
     {
-        let v: Vec<u8> = Vec::deserialize::<D>(deserializer)?;
+        let v: ByteBuf = ByteBuf::deserialize::<D>(deserializer)?;
         Ok(deserialize_ffi::<kvm_irqfd>(v))
     }
 }
@@ -2585,7 +2585,7 @@ impl<'de> Deserialize<'de> for kvm_clock_data {
         where
             D: Deserializer<'de>,
     {
-        let v: Vec<u8> = Vec::deserialize::<D>(deserializer)?;
+        let v: ByteBuf = ByteBuf::deserialize::<D>(deserializer)?;
         Ok(deserialize_ffi::<kvm_clock_data>(v))
     }
 }
@@ -2606,7 +2606,7 @@ impl<'de> Deserialize<'de> for kvm_config_tlb {
         where
             D: Deserializer<'de>,
     {
-        let v: Vec<u8> = Vec::deserialize::<D>(deserializer)?;
+        let v: ByteBuf = ByteBuf::deserialize::<D>(deserializer)?;
         Ok(deserialize_ffi::<kvm_config_tlb>(v))
     }
 }
@@ -2627,7 +2627,7 @@ impl<'de> Deserialize<'de> for kvm_dirty_tlb {
         where
             D: Deserializer<'de>,
     {
-        let v: Vec<u8> = Vec::deserialize::<D>(deserializer)?;
+        let v: ByteBuf = ByteBuf::deserialize::<D>(deserializer)?;
         Ok(deserialize_ffi::<kvm_dirty_tlb>(v))
     }
 }
@@ -2648,7 +2648,7 @@ impl<'de> Deserialize<'de> for kvm_reg_list {
         where
             D: Deserializer<'de>,
     {
-        let v: Vec<u8> = Vec::deserialize::<D>(deserializer)?;
+        let v: ByteBuf = ByteBuf::deserialize::<D>(deserializer)?;
         Ok(deserialize_ffi::<kvm_reg_list>(v))
     }
 }
@@ -2669,7 +2669,7 @@ impl<'de> Deserialize<'de> for kvm_one_reg {
         where
             D: Deserializer<'de>,
     {
-        let v: Vec<u8> = Vec::deserialize::<D>(deserializer)?;
+        let v: ByteBuf = ByteBuf::deserialize::<D>(deserializer)?;
         Ok(deserialize_ffi::<kvm_one_reg>(v))
     }
 }
@@ -2690,7 +2690,7 @@ impl<'de> Deserialize<'de> for kvm_msi {
         where
             D: Deserializer<'de>,
     {
-        let v: Vec<u8> = Vec::deserialize::<D>(deserializer)?;
+        let v: ByteBuf = ByteBuf::deserialize::<D>(deserializer)?;
         Ok(deserialize_ffi::<kvm_msi>(v))
     }
 }
@@ -2711,7 +2711,7 @@ impl<'de> Deserialize<'de> for kvm_arm_device_addr {
         where
             D: Deserializer<'de>,
     {
-        let v: Vec<u8> = Vec::deserialize::<D>(deserializer)?;
+        let v: ByteBuf = ByteBuf::deserialize::<D>(deserializer)?;
         Ok(deserialize_ffi::<kvm_arm_device_addr>(v))
     }
 }
@@ -2732,7 +2732,7 @@ impl<'de> Deserialize<'de> for kvm_create_device {
         where
             D: Deserializer<'de>,
     {
-        let v: Vec<u8> = Vec::deserialize::<D>(deserializer)?;
+        let v: ByteBuf = ByteBuf::deserialize::<D>(deserializer)?;
         Ok(deserialize_ffi::<kvm_create_device>(v))
     }
 }
@@ -2753,7 +2753,7 @@ impl<'de> Deserialize<'de> for kvm_device_attr {
         where
             D: Deserializer<'de>,
     {
-        let v: Vec<u8> = Vec::deserialize::<D>(deserializer)?;
+        let v: ByteBuf = ByteBuf::deserialize::<D>(deserializer)?;
         Ok(deserialize_ffi::<kvm_device_attr>(v))
     }
 }
@@ -2774,7 +2774,7 @@ impl<'de> Deserialize<'de> for kvm_vfio_spapr_tce {
         where
             D: Deserializer<'de>,
     {
-        let v: Vec<u8> = Vec::deserialize::<D>(deserializer)?;
+        let v: ByteBuf = ByteBuf::deserialize::<D>(deserializer)?;
         Ok(deserialize_ffi::<kvm_vfio_spapr_tce>(v))
     }
 }
@@ -2795,7 +2795,7 @@ impl<'de> Deserialize<'de> for kvm_s390_ucas_mapping {
         where
             D: Deserializer<'de>,
     {
-        let v: Vec<u8> = Vec::deserialize::<D>(deserializer)?;
+        let v: ByteBuf = ByteBuf::deserialize::<D>(deserializer)?;
         Ok(deserialize_ffi::<kvm_s390_ucas_mapping>(v))
     }
 }
@@ -2816,7 +2816,7 @@ impl<'de> Deserialize<'de> for kvm_assigned_pci_dev {
         where
             D: Deserializer<'de>,
     {
-        let v: Vec<u8> = Vec::deserialize::<D>(deserializer)?;
+        let v: ByteBuf = ByteBuf::deserialize::<D>(deserializer)?;
         Ok(deserialize_ffi::<kvm_assigned_pci_dev>(v))
     }
 }
@@ -2837,7 +2837,7 @@ impl<'de> Deserialize<'de> for kvm_assigned_pci_dev__bindgen_ty_1 {
         where
             D: Deserializer<'de>,
     {
-        let v: Vec<u8> = Vec::deserialize::<D>(deserializer)?;
+        let v: ByteBuf = ByteBuf::deserialize::<D>(deserializer)?;
         Ok(deserialize_ffi::<kvm_assigned_pci_dev__bindgen_ty_1>(v))
     }
 }
@@ -2858,7 +2858,7 @@ impl<'de> Deserialize<'de> for kvm_assigned_irq {
         where
             D: Deserializer<'de>,
     {
-        let v: Vec<u8> = Vec::deserialize::<D>(deserializer)?;
+        let v: ByteBuf = ByteBuf::deserialize::<D>(deserializer)?;
         Ok(deserialize_ffi::<kvm_assigned_irq>(v))
     }
 }
@@ -2879,7 +2879,7 @@ impl<'de> Deserialize<'de> for kvm_assigned_irq__bindgen_ty_1 {
         where
             D: Deserializer<'de>,
     {
-        let v: Vec<u8> = Vec::deserialize::<D>(deserializer)?;
+        let v: ByteBuf = ByteBuf::deserialize::<D>(deserializer)?;
         Ok(deserialize_ffi::<kvm_assigned_irq__bindgen_ty_1>(v))
     }
 }
@@ -2900,7 +2900,7 @@ impl<'de> Deserialize<'de> for kvm_assigned_msix_nr {
         where
             D: Deserializer<'de>,
     {
-        let v: Vec<u8> = Vec::deserialize::<D>(deserializer)?;
+        let v: ByteBuf = ByteBuf::deserialize::<D>(deserializer)?;
         Ok(deserialize_ffi::<kvm_assigned_msix_nr>(v))
     }
 }
@@ -2921,7 +2921,7 @@ impl<'de> Deserialize<'de> for kvm_assigned_msix_entry {
         where
             D: Deserializer<'de>,
     {
-        let v: Vec<u8> = Vec::deserialize::<D>(deserializer)?;
+        let v: ByteBuf = ByteBuf::deserialize::<D>(deserializer)?;
         Ok(deserialize_ffi::<kvm_assigned_msix_entry>(v))
     }
 }
