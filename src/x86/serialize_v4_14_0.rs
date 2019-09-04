@@ -24,7 +24,7 @@ fn serialize_ffi<T>(something: &T) -> ByteBuf {
 }
 
 fn deserialize_ffi<T>(serialized: ByteBuf) -> T {
-    unsafe { ptr::read(serialized.into_vec().as_ptr() as *const T) }
+    unsafe { ptr::read_unaligned(serialized.into_vec().as_ptr() as *const T) }
 }
 
 impl<Storage, Align> Serialize for __BindgenBitfieldUnit<Storage, Align>
