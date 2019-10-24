@@ -10,7 +10,7 @@ use std::mem;
 use std::ptr;
 
 use libc;
-use serde::de::{Deserialize, Deserializer};
+use serde::de::{Deserialize, Deserializer, Error};
 use serde::{Serialize, Serializer};
 use serde_bytes::ByteBuf;
 
@@ -54,7 +54,11 @@ where
         D: Deserializer<'de>,
     {
         let v: ByteBuf = ByteBuf::deserialize::<D>(deserializer)?;
-        Ok(deserialize_ffi::<__BindgenBitfieldUnit<Storage, Align>>(v))
+        if v.is_empty() {
+           Err(D::Error::custom("Empty buffer"))
+        } else {
+            Ok(deserialize_ffi::<__BindgenBitfieldUnit<Storage, Align>>(v))
+        }
     }
 }
 
@@ -94,7 +98,11 @@ impl<'de> Deserialize<'de> for TYPENAME {
             D: Deserializer<'de>,
     {
         let v: ByteBuf = ByteBuf::deserialize::<D>(deserializer)?;
-        Ok(deserialize_ffi::<TYPENAME>(v))
+        if v.len() < mem::size_of::<TYPENAME>() {
+            Err(D::Error::custom(format!("Incomplete buffer: size {}", v.len())))
+        } else {
+            Ok(deserialize_ffi::<TYPENAME>(v))
+        }
     }
 }
 
